@@ -1,5 +1,5 @@
 name: rychtech
-description: "A new Flutter project."
+description: "Rychtech aplikácia na ovládanie zvonov"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -34,6 +34,21 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  convex_bottom_bar: ^3.2.0
+  http: ^1.5.0
+  shared_preferences: ^2.5.3
+  email_validator: ^3.0.0
+  url_launcher: ^6.3.2
+  pigeon: ^26.0.2
+  app_settings: ^6.1.1
+  get: ^4.7.2
+  change_app_package_name: ^1.1.0
+  flutter_html: ^3.0.0-beta.2
+  onepref: ^0.0.9
+  intl: ^0.20.2
+  flutter_app_badger: ^1.5.0
+  device_info_plus: ^11.2.0
+  collection: ^1.19.0
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +71,48 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - lib/assets/images/
+    - lib/assets/strings/
+  #   - images/a_dot_ham.jpeg
+
+  fonts:
+   - family: Montserrat
+     fonts:
+      - asset: lib/assets/fonts/Montserrat/Montserrat-Light.ttf
+        weight: 300
+      - asset: lib/assets/fonts/Montserrat/Montserrat-Regular.ttf
+        weight: 400
+      - asset: lib/assets/fonts/Montserrat/Montserrat-Medium.ttf
+        weight: 500
+      - asset: lib/assets/fonts/Montserrat/Montserrat-SemiBold.ttf
+        weight: 600
+      - asset: lib/assets/fonts/Montserrat/Montserrat-Bold.ttf
+        weight: 700
+      - asset: lib/assets/fonts/Montserrat/Montserrat-ExtraBold.ttf
+        weight: 800
+   - family: Raleway
+     fonts:
+      - asset: lib/assets/fonts/raleway/Raleway-Thin.ttf
+        weight: 100
+      - asset: lib/assets/fonts/raleway/Raleway-ExtraLight.ttf
+        weight: 200
+      - asset: lib/assets/fonts/raleway/Raleway-Light.ttf
+        weight: 300
+      - asset: lib/assets/fonts/raleway/Raleway-Regular.ttf
+        weight: 400
+      - asset: lib/assets/fonts/raleway/Raleway-Medium.ttf
+        weight: 500
+      - asset: lib/assets/fonts/raleway/Raleway-SemiBold.ttf
+        weight: 600
+      - asset: lib/assets/fonts/raleway/Raleway-Bold.ttf
+        weight: 700
+      - asset: lib/assets/fonts/raleway/Raleway-ExtraBold.ttf
+        weight: 800
+      - asset: lib/assets/fonts/raleway/Raleway-Black.ttf
+        weight: 900
 
   # To add assets to your application, add an assets section, like this:
   # assets:
