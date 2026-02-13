@@ -34,7 +34,7 @@ class _BottomMenuState extends State<BottomMenu> {
       }
 
       if (i == 2) {
-        Navigator.of(context).popAndPushNamed("/home");
+        Navigator.of(context).popAndPushNamed("/PageSetting");
       }
     }
 

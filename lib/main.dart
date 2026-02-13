@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:onepref/onepref.dart';
 import 'package:rychtech/home.dart';
 import 'package:rychtech/login.dart';
+import 'package:rychtech/page_hodiny.dart';
+import 'package:rychtech/page_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../include/style.dart' as style;
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
       title: 'OnlineBell',
       theme: style.MainAppStyle().themeData,
       home: loggedIn ? HomePage() : login(), // Ak je prihlásený, zobraziť domovskú stránku, inak prihlásenie
-      routes: {'/home': (context) => HomePage(), '/login': (context) => login()},
+      routes: {'/home': (context) => HomePage(), '/PageHodiny': (context) => PageHodiny(), '/PageSetting': (context) => PageSetting(), '/login': (context) => login()},
     );
   }
 }
