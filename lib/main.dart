@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Rychtech',
+      title: 'OnlineBell',
       theme: style.MainAppStyle().themeData,
       home: loggedIn ? HomePage() : login(), // Ak je prihlásený, zobraziť domovskú stránku, inak prihlásenie
       routes: {'/home': (context) => HomePage(), '/login': (context) => login()},
