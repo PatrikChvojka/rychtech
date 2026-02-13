@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../include/style.dart' as style;
 import '../include/drupal_api.dart';
-import '../models/user_data.dart';
 import 'home.dart';
 
 class login extends StatefulWidget {
@@ -136,8 +135,8 @@ class _loginState extends State<login> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset('lib/assets/images/login_illustration3.png', height: 300),
-                              const SizedBox(height: 20),
+                              Image.asset('lib/assets/images/logo.png', height: 300),
+                              const SizedBox(height: 40),
                               Text(
                                 "Prihlásenie",
                                 style: TextStyle(color: style.MainAppStyle().mainColor, fontSize: 22, fontWeight: FontWeight.w600),
@@ -175,33 +174,6 @@ class _loginState extends State<login> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
                                   ),
-                                ),
-                              ),
-                              const SizedBox(height: 40),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Nemáte ešte konto? ", style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
-                                  GestureDetector(
-                                    onTap: () {
-                                      // TODO: navigácia na registráciu
-                                      // Navigator.pushNamed(context, '/register');
-                                    },
-                                    child: Text(
-                                      "Registrujte sa",
-                                      style: TextStyle(color: style.MainAppStyle().mainColor, fontSize: 16, fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              GestureDetector(
-                                onTap: () {
-                                  // forgot password
-                                },
-                                child: Text(
-                                  "Zabudli ste svoje heslo?",
-                                  style: TextStyle(color: style.MainAppStyle().mainColor, fontSize: 16, fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ],

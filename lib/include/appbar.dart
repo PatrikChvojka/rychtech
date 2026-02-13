@@ -53,11 +53,7 @@ class _MainAppBarState extends State<MainAppBar> {
                           },
                           child: Row(
                             children: [
-                              CircleAvatar(
-                                radius: 24,
-                                backgroundImage: NetworkImage('https://randomuser.me/api/portraits/men/1.jpg'), // Pridajte svoj obrázok avatara
-                              ),
-                              SizedBox(width: 20),
+                              SizedBox(width: 10),
                               FutureBuilder<String>(
                                 future: _userNameFuture, // Použijeme uložený Future
                                 builder: (context, snapshot) {

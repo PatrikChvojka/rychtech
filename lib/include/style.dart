@@ -15,8 +15,8 @@ class MainAppStyle {
 
   // MAIN Color
   Color bledsiamodra = Color.fromRGBO(151, 222, 223, 1);
-  Color mainColor = Color.fromRGBO(0, 176, 179, 1);
-  Color secondColor = Color.fromRGBO(0, 70, 103, 1);
+  Color mainColor = Color.fromRGBO(158, 4, 4, 1);
+  Color secondColor = Color.fromRGBO(192, 46, 46, 1);
   Color colorText = Color.fromRGBO(43, 43, 43, 1);
   Color colorOranzova = Color.fromRGBO(254, 102, 0, 1);
 

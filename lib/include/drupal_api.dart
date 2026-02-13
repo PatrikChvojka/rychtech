@@ -9,8 +9,8 @@ import '../models/user_data.dart';
 
 class DrupalAPI {
   // variables
-  String drupalURLWeb = "https://clegoo.com/";
-  String drupalURL = "https://clegoo.com/api";
-  final username = 'api_375';
+  String drupalURLWeb = "https://cms.rychtech.sk/";
+  String drupalURL = "https://cms.rychtech.sk/api";
+  final username = 'api_424';
   final password = 'apiHb@Clean24';
 }

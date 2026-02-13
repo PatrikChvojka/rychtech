@@ -25,25 +25,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> _userRoles = [];
-
   @override
   void initState() {
     super.initState();
-
-    // Start loading data immediately
-    _initializeData();
-  }
-
-  Future<void> _initializeData() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // TEST: simuluj dáta
-    final uid_role = prefs.getStringList('roles') ?? ['Obyvateľ', 'Firma']; // <- defaultne nech tam niečo je
-
-    setState(() {
-      _userRoles = uid_role;
-    });
   }
 
   @override
@@ -51,48 +35,45 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: MainAppBar(pageTitle: 'Home'),
       backgroundColor: Colors.white,
-      body: _userRoles.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : Container(
-              padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0, top: 15.0),
-              child: Column(children: [Text("test")]),
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: ListView(
+          children: [
+            _buildBox("Zvony", Color.fromRGBO(136, 33, 29, 1), context, "WebAdresy"),
+            _buildBox("Programy", Color.fromRGBO(11, 67, 216, 1), context, "WebAdresy"),
+            _buildBox("Hodiny", Color.fromRGBO(48, 152, 55, 1), context, "WebAdresy"),
+            _buildBox("Zvonenie zosnulému", Color.fromRGBO(156, 39, 176, 1), context, "WebAdresy"),
+            _buildBox("Nastavania", Color.fromRGBO(237, 173, 42, 1), context, "WebAdresy"),
+          ],
+        ),
+      ),
+
       /* BOTTOM MENU */
       bottomNavigationBar: const BottomMenu(index: 0),
     );
   }
 
-  Widget _buildBox(String title, String icon, BuildContext context, String route) {
+  Widget _buildBox(String title, Color color, BuildContext context, String route) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, '/$route');
       },
       child: Container(
-        margin: EdgeInsets.all(2),
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 18),
         decoration: BoxDecoration(
-          //  color: Color.fromRGBO(197, 197, 197, 1).withOpacity(0.9),
-          color: Color.fromRGBO(232, 234, 240, 1),
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: Offset(0, 4))],
+          color: color,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [BoxShadow(color: color.withOpacity(0.35), blurRadius: 10, offset: const Offset(0, 6))],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(padding: EdgeInsets.all(16), child: Image.asset("lib/assets/images/$icon.png", height: 55, width: 55)),
-            Flexible(
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.black,
-                  // color: iconBgColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white, // aby bol text čitateľný
+          ),
         ),
       ),
     );
