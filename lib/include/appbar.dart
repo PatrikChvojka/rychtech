@@ -90,16 +90,14 @@ class _MainAppBarState extends State<MainAppBar> {
                     )
                   : Row(
                       children: [
-                        widget.pageTitle != 'Nastavenia' && widget.pageTitle != 'Informácie' && widget.pageTitle != 'Oskenuj QR'
-                            ? Padding(
-                                padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 20),
-                                child: TextButton(
-                                  style: TextButton.styleFrom(backgroundColor: Color.fromRGBO(0, 0, 0, 0.05), maximumSize: Size(40.0, 40.0), minimumSize: Size(40.0, 40.0)),
-                                  child: Icon(size: 23.0, Icons.arrow_back, color: Color.fromRGBO(0, 0, 0, 0.5)),
-                                  onPressed: () => Navigator.pop(context, true),
-                                ),
-                              )
-                            : SizedBox(width: 15),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 20),
+                          child: TextButton(
+                            style: TextButton.styleFrom(backgroundColor: Color.fromRGBO(0, 0, 0, 0.05), maximumSize: Size(40.0, 40.0), minimumSize: Size(40.0, 40.0)),
+                            child: Icon(size: 23.0, Icons.arrow_back, color: Color.fromRGBO(0, 0, 0, 0.5)),
+                            onPressed: () => Navigator.pop(context, true),
+                          ),
+                        ),
                         Expanded(
                           child: Text(
                             widget.pageTitle, // Zobrazí názov stránky
