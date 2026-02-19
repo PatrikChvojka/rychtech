@@ -3,6 +3,7 @@ import 'package:onepref/onepref.dart';
 import 'package:rychtech/home.dart';
 import 'package:rychtech/login.dart';
 import 'package:rychtech/page_hodiny.dart';
+import 'package:rychtech/page_programy.dart';
 import 'package:rychtech/page_settings.dart';
 import 'package:rychtech/page_zvony.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/PageHodiny': (context) => PageHodiny(),
         '/PageSetting': (context) => PageSetting(),
         '/PageZvony': (context) => PageZvony(),
+        '/PageProgramy': (context) => PageProgramy(),
         '/login': (context) => login(),
       },
     );
