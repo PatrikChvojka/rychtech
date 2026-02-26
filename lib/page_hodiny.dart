@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:rychtech/include/style.dart' as style;
 
 class PageHodiny extends StatefulWidget {
   const PageHodiny({super.key});
@@ -196,7 +197,7 @@ class _PageHodinyState extends State<PageHodiny> {
                     Expanded(
                       child: _controlButton(
                         text: "STOP",
-                        color: Colors.red,
+                        color: style.MainAppStyle().mainColor,
                         isActive: systemState == "STOJ",
                         onTap: () async {
                           await _sendState("STOJ");

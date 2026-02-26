@@ -63,7 +63,7 @@ class _PageZvonyState extends State<PageZvony> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(pageTitle: 'Zvony'),
+      appBar: AppBar(title: const Text("Zvony")),
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(15.0),

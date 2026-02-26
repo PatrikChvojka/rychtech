@@ -138,7 +138,7 @@ class _PageProgramyState extends State<PageProgramy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(pageTitle: 'Programy'),
+      appBar: AppBar(title: const Text("Programy")),
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(15),

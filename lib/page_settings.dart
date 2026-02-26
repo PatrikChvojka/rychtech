@@ -81,7 +81,8 @@ class _PageSettingState extends State<PageSetting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(pageTitle: 'Nastavenia'),
+      appBar: AppBar(title: const Text("Nastavenia")),
+
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(15.0),

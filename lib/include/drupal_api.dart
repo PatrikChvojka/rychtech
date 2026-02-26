@@ -34,6 +34,14 @@ class DrupalAPI {
     }
   }
 
+  Future<String> getZvonenieZosnulemu() async {
+    return "";
+  }
+
+  Future<bool> setZvonenieZosnulemu(String data) async {
+    return false;
+  }
+
   /// Príklad funkcie na zápis stringu do DB
   Future<bool> setZvonyString(int uid, int code, String string) async {
     try {

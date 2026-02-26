@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             _buildBox("Zvony", Color.fromRGBO(136, 33, 29, 1), context, "PageZvony"),
             _buildBox("Programy", Color.fromRGBO(11, 67, 216, 1), context, "PageProgramy"),
             _buildBox("Hodiny", Color.fromRGBO(48, 152, 55, 1), context, "PageHodiny"),
-            _buildBox("Zvonenie zosnulému", Color.fromRGBO(156, 39, 176, 1), context, "PageHodiny"),
+            _buildBox("Zvonenie zosnulému", Color.fromRGBO(156, 39, 176, 1), context, "ZvonenieZosnulemu"),
             _buildBox("Nastavania", Color.fromRGBO(237, 173, 42, 1), context, "PageSetting"),
           ],
         ),
