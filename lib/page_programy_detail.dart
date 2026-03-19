@@ -51,45 +51,52 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
   Future<void> loadDataFromServer() async {
     String result = await api.getZvonyString(widget.uid, widget.code);
 
+    // fallback: ak prázdne alebo veľmi krátke
+    if (result.isEmpty) {
+      result = "1,00:00,0,0,0,0,1,1";
+    }
+
     List<String> tmp = result.split(',');
 
-    // default ak chýbajú dáta
-    if (tmp.isEmpty || tmp.join(',') == "0,00:00,0,0,0,0,0,0") {
-      tmp = ["1", "00:00", "0", "0", "0", "0", "1", "1"];
+    // ak split nedá dosť prvkov, doplniť nuly
+    while (tmp.length < 8) {
+      tmp.add("0");
     }
 
     parts = tmp;
 
-    // čas
-    List<String> t = parts[1].split(':');
-    int h = int.tryParse(t[0]) ?? 0;
-    int m = int.tryParse(t[1]) ?? 0;
+    // bezpečne načítanie času
+    String timeStr = parts.length > 1 ? parts[1] : "00:00";
+    List<String> t = timeStr.split(':');
+    int h = (t.isNotEmpty) ? int.tryParse(t[0]) ?? 0 : 0;
+    int m = (t.length > 1) ? int.tryParse(t[1]) ?? 0 : 0;
     time = TimeOfDay(hour: h, minute: m);
 
     // dĺžka
-    dlzkaController = TextEditingController(text: parts[2]);
+    dlzkaController = TextEditingController(text: parts.length > 2 ? parts[2] : "0");
 
-    // zvony
-    String zv = parts[3];
+    // zvony bitmask
+    int zvMask = parts.length > 3 ? int.tryParse(parts[3]) ?? 0 : 0;
     for (int i = 0; i < 5; i++) {
-      zvony[i] = zv.contains("${i + 1}");
+      zvony[i] = (zvMask & (1 << i)) != 0;
     }
 
-    // dni
-    int dniMask = int.tryParse(parts[4]) ?? 0;
+    // dni bitmask
+    int dniMask = parts.length > 4 ? int.tryParse(parts[4]) ?? 0 : 0;
     for (int i = 0; i < 7; i++) {
       dni[i] = (dniMask & (1 << i)) != 0;
     }
 
-    perioda = int.tryParse(parts[5]) ?? 0;
-    den = int.tryParse(parts[6]) ?? 1;
-    mesiac = int.tryParse(parts[7]) ?? 1;
+    // perioda, den, mesiac
+    perioda = parts.length > 5 ? int.tryParse(parts[5]) ?? 0 : 0;
+    den = parts.length > 6 ? int.tryParse(parts[6]) ?? 1 : 1;
+    mesiac = parts.length > 7 ? int.tryParse(parts[7]) ?? 1 : 1;
 
     denController = TextEditingController(text: den.toString());
     mesiacController = TextEditingController(text: mesiac.toString());
 
     setState(() {
-      isLoading = false; // načítanie hotové
+      isLoading = false;
     });
   }
 
@@ -120,12 +127,14 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
     String dlzka = dlzkaController.text.trim();
     if (dlzka.isEmpty) dlzka = "0";
 
-    // zvony
-    String zvStr = "";
+    // zvony bitmask
+    int zvMask = 0;
+
     for (int i = 0; i < 5; i++) {
-      if (zvony[i]) zvStr += "${i + 1}";
+      if (zvony[i]) {
+        zvMask |= (1 << i);
+      }
     }
-    if (zvStr.isEmpty) zvStr = "0";
 
     // dni bitmask
     int dniMask = 0;
@@ -133,7 +142,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
       if (dni[i]) dniMask |= (1 << i);
     }
 
-    String newString = "${parts[0]},$timeStr,$dlzka,$zvStr,$dniMask,$perioda,$den,$mesiac";
+    String newString = "${parts[0]},$timeStr,$dlzka,$zvMask,$dniMask,$perioda,$den,$mesiac";
 
     bool success = await api.setZvonyString(widget.uid, widget.code, newString);
 

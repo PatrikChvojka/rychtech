@@ -11,8 +11,8 @@ class PageZvony extends StatefulWidget {
 }
 
 class _PageZvonyState extends State<PageZvony> {
-  String zvonyString = "0,0,0,0,0,0,0,0";
-  List<int> values = List.filled(8, 0);
+  int mask = 0;
+  List<bool> zvony = List.filled(5, false);
 
   int uid = 0;
   final code = 54;
@@ -34,29 +34,41 @@ class _PageZvonyState extends State<PageZvony> {
   Future<void> loadZvonyString() async {
     String result = await api.getZvonyString(uid, code);
 
-    if (result.isEmpty || result.split(',').length < 8) {
-      result = "0,0,0,0,0,0,0,0";
+    int m = int.tryParse(result) ?? 0;
+
+    List<bool> tmp = List.filled(5, false);
+
+    for (int i = 0; i < 5; i++) {
+      tmp[i] = (m & (1 << i)) != 0;
     }
 
     setState(() {
-      zvonyString = result;
-      values = ZvonyUtils.toIntList(result);
+      mask = m;
+      zvony = tmp;
     });
   }
 
   Future<void> updateZvon(int index, bool stav) async {
-    values[index] = stav ? 1 : 0;
+    setState(() {
+      zvony[index] = stav;
+    });
 
-    String newString = values.join(',');
+    int newMask = 0;
 
-    bool success = await api.setZvonyString(uid, code, newString);
+    for (int i = 0; i < 5; i++) {
+      if (zvony[i]) {
+        newMask |= (1 << i);
+      }
+    }
+
+    bool success = await api.setZvonyString(uid, code, newMask.toString());
 
     if (success) {
       setState(() {
-        zvonyString = newString;
+        mask = newMask;
       });
     } else {
-      print("Chyba pri ukladaní!");
+      print("Chyba pri ukladaní");
     }
   }
 
@@ -73,7 +85,7 @@ class _PageZvonyState extends State<PageZvony> {
   }
 
   Widget _buildZvonButton(String title, int index) {
-    bool isActive = values[index] == 1;
+    bool isActive = zvony[index];
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),

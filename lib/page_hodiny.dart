@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:rychtech/include/style.dart' as style;
 
 class PageHodiny extends StatefulWidget {
@@ -20,6 +21,9 @@ class _PageHodinyState extends State<PageHodiny> {
 
   Timer? statusTimer;
   Timer? timeTimer;
+
+  int pickerHour = 12;
+  int pickerMinute = 0;
 
   @override
   void initState() {
@@ -126,21 +130,53 @@ class _PageHodinyState extends State<PageHodiny> {
     setState(() => loading = false);
   }
 
-  // ====== UI ======
   Future<void> _pickTime() async {
-    final picked = await showTimePicker(context: context, initialTime: editedTime ?? clockTime);
+    // nastav stavové premenné
+    pickerHour = editedTime?.hourOfPeriod ?? (clockTime.hourOfPeriod == 0 ? 12 : clockTime.hourOfPeriod);
+    pickerMinute = editedTime?.minute ?? clockTime.minute;
 
-    if (picked != null) {
-      setState(() {
-        editedTime = picked;
-      });
-    }
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Vyber hodiny"),
+          content: StatefulBuilder(
+            builder: (context, setDialogState) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // HODINY
+                  NumberPicker(minValue: 1, maxValue: 12, value: pickerHour, onChanged: (val) => setDialogState(() => pickerHour = val)),
+                  const Text(" : "),
+                  // MINÚTY
+                  NumberPicker(minValue: 0, maxValue: 59, value: pickerMinute, zeroPad: true, onChanged: (val) => setDialogState(() => pickerMinute = val)),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Zrušiť")),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  editedTime = TimeOfDay(hour: pickerHour % 12, minute: pickerMinute);
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   String _formatTime(TimeOfDay t) {
-    final h = t.hour.toString().padLeft(2, '0');
-    final m = t.minute.toString().padLeft(2, '0');
-    return "$h:$m";
+    int hour = t.hour % 12;
+    if (hour == 0) hour = 12;
+
+    final minute = t.minute.toString().padLeft(2, '0');
+    return "$hour:$minute";
   }
 
   @override
