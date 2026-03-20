@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:rychtech/include/style.dart' as style;
+import 'package:rychtech/models/user_data.dart';
+import '../include/drupal_api.dart';
 
 class PageHodiny extends StatefulWidget {
   const PageHodiny({super.key});
@@ -11,32 +13,236 @@ class PageHodiny extends StatefulWidget {
 }
 
 class _PageHodinyState extends State<PageHodiny> {
-  // ====== STAVY ======
-  String systemState = "OK"; // OK | STOJ (ilustračne)
+  String systemState = "OK";
   TimeOfDay clockTime = const TimeOfDay(hour: 12, minute: 0);
-
   TimeOfDay? editedTime;
+
+  final DrupalAPI api = DrupalAPI();
+
+  int uid = 0;
 
   bool loading = false;
 
+  bool waitingForState = false;
+  String? expectedState;
+
   Timer? statusTimer;
-  Timer? timeTimer;
 
   int pickerHour = 12;
   int pickerMinute = 0;
 
+  // ================= INIT =================
+
+  Future<void> initData() async {
+    String uidStr = await UserData.getCurrentUser('uid');
+    uid = int.tryParse(uidStr) ?? 0;
+
+    _startPolling();
+  }
+
   @override
   void initState() {
     super.initState();
-    _startPolling();
+    initData();
   }
 
   @override
   void dispose() {
     statusTimer?.cancel();
-    timeTimer?.cancel();
     super.dispose();
   }
+
+  // ================= HELPERS =================
+
+  bool _isSameTime(TimeOfDay a, TimeOfDay b) {
+    return a.hour == b.hour && a.minute == b.minute;
+  }
+
+  String _formatTime(TimeOfDay t) {
+    int hour = t.hour % 12;
+    if (hour == 0) hour = 12;
+
+    final minute = t.minute.toString().padLeft(2, '0');
+    return "$hour:$minute";
+  }
+
+  // ================= POLLING =================
+
+  void _startPolling() {
+    statusTimer = Timer.periodic(const Duration(seconds: 5), (_) => _loadFromApi());
+
+    _loadFromApi();
+  }
+
+  Future<void> _loadFromApi() async {
+    if (uid == 0) return;
+
+    try {
+      // ---- stav ----
+      final stateRes = await api.getZvonyString(uid, 74);
+
+      // ---- čas ----
+      final timeRes = await api.getZvonyString(uid, 75);
+
+      final stateStr = stateRes.trim(); // "1" / "2"
+      final timeStr = timeRes.trim(); // "12:50"
+
+      // prevod stavu na text
+
+      String newState = "OK";
+
+      if (stateStr == "2") {
+        newState = "STOJ";
+      } else {
+        newState = "OK";
+      }
+
+      // parsovanie času
+
+      final t = timeStr.split(":");
+
+      if (t.length < 2) return;
+
+      final h = int.tryParse(t[0]) ?? 0;
+      final m = int.tryParse(t[1]) ?? 0;
+
+      setState(() {
+        systemState = newState;
+
+        clockTime = TimeOfDay(hour: h, minute: m);
+
+        // keď ide CHOD → zruš edit
+        if (systemState != "STOJ") {
+          editedTime = null;
+        }
+
+        // ===== kontrola čakania =====
+
+        if (waitingForState) {
+          // čakali sme STOJ
+
+          if (expectedState == "2" && systemState == "STOJ") {
+            loading = false;
+            waitingForState = false;
+            expectedState = null;
+          }
+
+          // čakali sme CHOD
+
+          if (expectedState == "1" && systemState != "STOJ") {
+            loading = false;
+            waitingForState = false;
+            expectedState = null;
+          }
+        }
+      });
+    } catch (e) {
+      print("loadFromApi error: $e");
+    }
+  }
+
+  // ================= API SEND =================
+
+  Future<void> _sendState(String state) async {
+    setState(() {
+      loading = true;
+      waitingForState = true;
+      expectedState = state;
+    });
+
+    try {
+      await api.setZvonyString(uid, 80, state);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _sendTimeAndStart() async {
+    if (editedTime == null) return;
+
+    setState(() {
+      loading = true;
+      waitingForState = true;
+      expectedState = "1";
+    });
+
+    final t = editedTime!;
+
+    final h = t.hour.toString().padLeft(2, '0');
+    final m = t.minute.toString().padLeft(2, '0');
+
+    final time = "$h:$m";
+
+    try {
+      await api.setZvonyString(uid, 81, time);
+
+      editedTime = null;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // ================= TIME PICKER =================
+
+  Future<void> _pickTime() async {
+    pickerHour = editedTime?.hourOfPeriod ?? (clockTime.hourOfPeriod == 0 ? 12 : clockTime.hourOfPeriod);
+
+    pickerMinute = editedTime?.minute ?? clockTime.minute;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Vyber hodiny"),
+          content: StatefulBuilder(
+            builder: (context, setDialogState) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  NumberPicker(
+                    minValue: 1,
+                    maxValue: 12,
+                    value: pickerHour,
+                    onChanged: (val) => setDialogState(() {
+                      pickerHour = val;
+                    }),
+                  ),
+
+                  const Text(" : "),
+
+                  NumberPicker(
+                    minValue: 0,
+                    maxValue: 59,
+                    value: pickerMinute,
+                    zeroPad: true,
+                    onChanged: (val) => setDialogState(() {
+                      pickerMinute = val;
+                    }),
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Zrušiť")),
+
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  editedTime = TimeOfDay(hour: pickerHour % 12, minute: pickerMinute);
+                });
+
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ================= UI =================
 
   Widget _controlButton({required String text, required Color color, required bool isActive, required VoidCallback onTap}) {
     final opacity = isActive ? 1.0 : 0.5;
@@ -55,129 +261,14 @@ class _PageHodinyState extends State<PageHodiny> {
           alignment: Alignment.center,
           child: Text(
             text,
-            style: TextStyle(color: isActive ? color : Colors.grey, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1),
+            style: TextStyle(color: isActive ? color : Colors.grey, fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
       ),
     );
   }
 
-  // ====== POLLING ======
-  void _startPolling() {
-    // Stav systému každých 5s
-    statusTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      _loadSystemState();
-    });
-
-    // Čas každú minútu
-    timeTimer = Timer.periodic(const Duration(minutes: 1), (_) {
-      if (systemState != "STOJ") {
-        _loadClockTime();
-      }
-    });
-
-    // prvé načítanie
-    _loadSystemState();
-    _loadClockTime();
-  }
-
-  // ====== ILUSTRAČNÉ API ======
-  Future<void> _loadSystemState() async {
-    // simulácia API
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    // tu bude neskôr API
-    // napr.: systemState = await Api.getState();
-
-    setState(() {});
-  }
-
-  Future<void> _loadClockTime() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    // simulácia – zatiaľ lokálny čas
-    final now = DateTime.now();
-    clockTime = TimeOfDay(hour: now.hour, minute: now.minute);
-
-    setState(() {});
-  }
-
-  Future<void> _sendState(String state) async {
-    setState(() => loading = true);
-
-    // simulácia API
-    await Future.delayed(const Duration(seconds: 1));
-
-    systemState = state;
-
-    setState(() => loading = false);
-  }
-
-  Future<void> _sendTimeAndStart() async {
-    if (editedTime == null) return;
-
-    setState(() => loading = true);
-
-    // simulácia odoslania času
-    await Future.delayed(const Duration(seconds: 1));
-
-    // tu bude API:
-    // await Api.setClock(editedTime);
-
-    systemState = "OK";
-    editedTime = null;
-
-    setState(() => loading = false);
-  }
-
-  Future<void> _pickTime() async {
-    // nastav stavové premenné
-    pickerHour = editedTime?.hourOfPeriod ?? (clockTime.hourOfPeriod == 0 ? 12 : clockTime.hourOfPeriod);
-    pickerMinute = editedTime?.minute ?? clockTime.minute;
-
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Vyber hodiny"),
-          content: StatefulBuilder(
-            builder: (context, setDialogState) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // HODINY
-                  NumberPicker(minValue: 1, maxValue: 12, value: pickerHour, onChanged: (val) => setDialogState(() => pickerHour = val)),
-                  const Text(" : "),
-                  // MINÚTY
-                  NumberPicker(minValue: 0, maxValue: 59, value: pickerMinute, zeroPad: true, onChanged: (val) => setDialogState(() => pickerMinute = val)),
-                ],
-              );
-            },
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Zrušiť")),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  editedTime = TimeOfDay(hour: pickerHour % 12, minute: pickerMinute);
-                });
-                Navigator.pop(context);
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  String _formatTime(TimeOfDay t) {
-    int hour = t.hour % 12;
-    if (hour == 0) hour = 12;
-
-    final minute = t.minute.toString().padLeft(2, '0');
-    return "$hour:$minute";
-  }
+  // ================= BUILD =================
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +283,6 @@ class _PageHodinyState extends State<PageHodiny> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // ===== STAV SYSTEMU =====
                 Card(
                   child: ListTile(
                     title: const Text("Stav systému"),
@@ -202,7 +292,6 @@ class _PageHodinyState extends State<PageHodiny> {
 
                 const SizedBox(height: 20),
 
-                // ===== CAS NA HODINACH =====
                 Card(
                   child: ListTile(
                     title: const Text("Čas na hodinách"),
@@ -221,22 +310,28 @@ class _PageHodinyState extends State<PageHodiny> {
                         color: Colors.green,
                         isActive: systemState != "STOJ",
                         onTap: () async {
-                          if (systemState == "STOJ" && editedTime != null) {
-                            await _sendTimeAndStart();
+                          if (systemState == "STOJ") {
+                            if (editedTime != null && !_isSameTime(editedTime!, clockTime)) {
+                              await _sendTimeAndStart();
+                            } else {
+                              await _sendState("1");
+                            }
                           } else {
-                            await _sendState("OK");
+                            await _sendState("1");
                           }
                         },
                       ),
                     ),
+
                     const SizedBox(width: 16),
+
                     Expanded(
                       child: _controlButton(
                         text: "STOP",
                         color: style.MainAppStyle().mainColor,
                         isActive: systemState == "STOJ",
                         onTap: () async {
-                          await _sendState("STOJ");
+                          await _sendState("2");
                         },
                       ),
                     ),
@@ -248,11 +343,12 @@ class _PageHodinyState extends State<PageHodiny> {
             ),
           ),
 
-          // ===== FULLSCREEN LOADER =====
           if (loading)
-            Container(
-              color: Colors.black45,
-              child: const Center(child: CircularProgressIndicator()),
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.3),
+                child: const Center(child: CircularProgressIndicator(strokeWidth: 4)),
+              ),
             ),
         ],
       ),
