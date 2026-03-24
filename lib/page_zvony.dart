@@ -29,6 +29,9 @@ class _PageZvonyState extends State<PageZvony> {
     String uidStr = await UserData.getCurrentUser('uid');
     uid = int.tryParse(uidStr) ?? 0;
     await loadZvonyString();
+
+    // aktivita
+    await api.setZvonyString(uid, 32, "2");
   }
 
   Future<void> loadZvonyString() async {

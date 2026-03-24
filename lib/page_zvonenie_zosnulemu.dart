@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rychtech/include/style.dart' as style;
+import 'package:rychtech/models/user_data.dart';
 import '../include/drupal_api.dart';
 
 class ZvonenieZosnulemu extends StatefulWidget {
@@ -17,6 +18,8 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
   bool isLoading = true;
   bool aktivne = false;
 
+  int uid = 0;
+
   TimeOfDay time1 = const TimeOfDay(hour: 7, minute: 0);
   TimeOfDay time2 = const TimeOfDay(hour: 18, minute: 0);
 
@@ -32,6 +35,17 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
     super.initState();
     dlzkaController = TextEditingController(text: "30");
     loadData();
+    initData();
+  }
+
+  // ================= INIT =================
+
+  Future<void> initData() async {
+    String uidStr = await UserData.getCurrentUser('uid');
+    uid = int.tryParse(uidStr) ?? 0;
+
+    // aktivita
+    await api.setZvonyString(uid, 32, "4");
   }
 
   Widget _controlButton({required String text, required Color color, required bool isActive, required VoidCallback onTap}) {

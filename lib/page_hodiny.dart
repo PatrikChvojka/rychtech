@@ -38,6 +38,9 @@ class _PageHodinyState extends State<PageHodiny> {
     uid = int.tryParse(uidStr) ?? 0;
 
     _startPolling();
+
+    // aktivita
+    await api.setZvonyString(uid, 32, "4");
   }
 
   @override

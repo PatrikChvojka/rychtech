@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rychtech/models/user_data.dart';
 import '../include/drupal_api.dart';
 
 class PageProgramDetail extends StatefulWidget {
@@ -33,6 +34,8 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
   // zvony 1-5
   List<bool> zvony = List.filled(5, false);
 
+  int uid = 0;
+
   // perióda: 0 = týždeň, 1 = rok
   int perioda = 0;
 
@@ -45,7 +48,18 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
   @override
   void initState() {
     super.initState();
+    initData();
     loadDataFromServer();
+  }
+
+  // ================= INIT =================
+
+  Future<void> initData() async {
+    String uidStr = await UserData.getCurrentUser('uid');
+    uid = int.tryParse(uidStr) ?? 0;
+
+    // aktivita
+    await api.setZvonyString(uid, 32, "4");
   }
 
   Future<void> loadDataFromServer() async {

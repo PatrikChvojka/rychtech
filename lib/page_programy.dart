@@ -34,6 +34,9 @@ class _PageProgramyState extends State<PageProgramy> {
     String uidStr = await UserData.getCurrentUser('uid');
     uid = int.tryParse(uidStr) ?? 0;
     await loadPrograms();
+
+    // aktivita
+    await api.setZvonyString(uid, 32, "6");
   }
 
   // =========================
