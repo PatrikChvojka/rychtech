@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rychtech/models/user_data.dart';
 import '../include/drupal_api.dart';
 
@@ -141,6 +142,11 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
     String dlzka = dlzkaController.text.trim();
     if (dlzka.isEmpty) dlzka = "0";
 
+    int dlzkaInt = int.tryParse(dlzka) ?? 0;
+    if (dlzkaInt > 600) dlzkaInt = 600;
+    if (dlzkaInt < 0) dlzkaInt = 0;
+    dlzka = dlzkaInt.toString();
+
     // zvony bitmask
     int zvMask = 0;
 
@@ -207,7 +213,16 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
             child: TextField(
               controller: dlzkaController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: "Dĺžka zvonenia (sekundy)"),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
+              decoration: const InputDecoration(labelText: "Dĺžka zvonenia (sekundy)", helperText: "Maximálna hodnota 600"),
+              onChanged: (value) {
+                if (value.isEmpty) return;
+                int parsed = int.tryParse(value) ?? 0;
+                if (parsed > 600) {
+                  dlzkaController.text = '600';
+                  dlzkaController.selection = TextSelection.collapsed(offset: dlzkaController.text.length);
+                }
+              },
             ),
           ),
 

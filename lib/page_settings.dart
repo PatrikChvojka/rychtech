@@ -186,7 +186,7 @@ class _PageSettingState extends State<PageSetting> {
                         updateMask(cyklus: true);
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: cyklusPol ? Colors.blue : Colors.grey.shade300),
-                      child: Text("½", style: TextStyle(color: cyklusPol ? Colors.white : Colors.black)),
+                      child: Text("1/2", style: TextStyle(color: cyklusPol ? Colors.white : Colors.black)),
                     ),
                   ),
 
@@ -198,7 +198,7 @@ class _PageSettingState extends State<PageSetting> {
                         updateMask(cyklus: false);
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: !cyklusPol ? Colors.blue : Colors.grey.shade300),
-                      child: Text("¼", style: TextStyle(color: !cyklusPol ? Colors.white : Colors.black)),
+                      child: Text("1/4", style: TextStyle(color: !cyklusPol ? Colors.white : Colors.black)),
                     ),
                   ),
                 ],

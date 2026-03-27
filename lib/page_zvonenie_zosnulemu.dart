@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rychtech/include/style.dart' as style;
 import 'package:rychtech/models/user_data.dart';
 import '../include/drupal_api.dart';
@@ -128,6 +129,11 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
     String dlzka = dlzkaController.text.trim();
     if (dlzka.isEmpty) dlzka = "0";
 
+    int dlzkaInt = int.tryParse(dlzka) ?? 0;
+    if (dlzkaInt > 600) dlzkaInt = 600;
+    if (dlzkaInt < 0) dlzkaInt = 0;
+    dlzka = dlzkaInt.toString();
+
     // zvony bitmask
     int zvMask = 0;
     for (int i = 0; i < 5; i++) {
@@ -204,7 +210,16 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
           TextField(
             controller: dlzkaController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: "Dĺžka zvonenia (sekundy)", border: OutlineInputBorder()),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
+            decoration: const InputDecoration(labelText: "Dĺžka zvonenia (sekundy)", border: OutlineInputBorder(), helperText: "Maximálna hodnota 600"),
+            onChanged: (value) {
+              if (value.isEmpty) return;
+              int parsed = int.tryParse(value) ?? 0;
+              if (parsed > 600) {
+                dlzkaController.text = '600';
+                dlzkaController.selection = TextSelection.collapsed(offset: dlzkaController.text.length);
+              }
+            },
           ),
 
           const SizedBox(height: 15),
@@ -220,7 +235,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
             child: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
-              child: Text("Dátum do: ${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 16)),
+              child: Text("Dátum pohrebu: ${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 16)),
             ),
           ),
 

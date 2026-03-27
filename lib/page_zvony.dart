@@ -10,7 +10,7 @@ class PageZvony extends StatefulWidget {
   State<PageZvony> createState() => _PageZvonyState();
 }
 
-class _PageZvonyState extends State<PageZvony> {
+class _PageZvonyState extends State<PageZvony> with WidgetsBindingObserver {
   int mask = 0;
   List<bool> zvony = List.filled(5, false);
 
@@ -22,13 +22,19 @@ class _PageZvonyState extends State<PageZvony> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     initData();
   }
 
   Future<void> initData() async {
     String uidStr = await UserData.getCurrentUser('uid');
     uid = int.tryParse(uidStr) ?? 0;
-    await loadZvonyString();
+
+    // always start disabled (ignore server state)
+    setState(() {
+      mask = 0;
+      zvony = List.filled(5, false);
+    });
 
     // aktivita
     await api.setZvonyString(uid, 32, "2");
@@ -75,14 +81,49 @@ class _PageZvonyState extends State<PageZvony> {
     }
   }
 
+  Future<void> _disableAllZvony() async {
+    if (mounted) {
+      setState(() {
+        mask = 0;
+        zvony = List.filled(5, false);
+      });
+    }
+
+    bool success = await api.setZvonyString(uid, code, '0');
+    if (!success) {
+      print('Chyba pri vypnutí zvonov pri opustení stránky');
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // Do not call async API updates from dispose, we handle disable on pop in WillPopScope.
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
+      _disableAllZvony();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Zvony")),
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: ListView(children: [_buildZvonButton("Zvon 1", 0), _buildZvonButton("Zvon 2", 1), _buildZvonButton("Zvon 3", 2), _buildZvonButton("Zvon 4", 3), _buildZvonButton("Zvon 5", 4)]),
+    return WillPopScope(
+      onWillPop: () async {
+        await _disableAllZvony();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Zvony")),
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: ListView(children: [_buildZvonButton("Zvon 1", 0), _buildZvonButton("Zvon 2", 1), _buildZvonButton("Zvon 3", 2), _buildZvonButton("Zvon 4", 3), _buildZvonButton("Zvon 5", 4)]),
+        ),
       ),
     );
   }
