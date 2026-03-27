@@ -34,6 +34,9 @@ class _PageSettingState extends State<PageSetting> {
     uid = int.tryParse(uidStr) ?? 0;
 
     await loadZvonyString();
+
+    // aktivita
+    api.setZvonyString(uid, 32, "1");
   }
 
   Future<void> loadZvonyString() async {

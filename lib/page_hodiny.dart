@@ -96,8 +96,15 @@ class _PageHodinyState extends State<PageHodiny> {
 
       if (stateStr == "2") {
         newState = "STOJ";
-      } else {
+      }
+      if (stateStr == "1") {
         newState = "OK";
+      }
+      if (stateStr == "5") {
+        newState = "DOBIEHAJÚ";
+      }
+      if (stateStr == "7") {
+        newState = "ČAKAJÚ";
       }
 
       // parsovanie času

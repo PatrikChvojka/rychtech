@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rychtech/include/drupal_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../include/appbar.dart';
 import '../include/bottom_menu.dart';
@@ -25,13 +26,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final DrupalAPI api = DrupalAPI();
+
+  int uid = 0;
+
   @override
   void initState() {
     super.initState();
+    initData();
+  }
+
+  // ================= INIT =================
+
+  Future<void> initData() async {
+    String uidStr = await UserData.getCurrentUser('uid');
+    uid = int.tryParse(uidStr) ?? 0;
+
+    // aktivita
+    await api.setZvonyString(uid, 32, "1");
   }
 
   @override
   Widget build(BuildContext context) {
+    // aktivita
+    api.setZvonyString(uid, 32, "1");
+
     return Scaffold(
       appBar: MainAppBar(pageTitle: 'Home'),
       backgroundColor: Colors.white,
