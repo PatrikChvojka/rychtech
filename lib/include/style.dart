@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class MainAppStyle {
   // hlavné farby
+  final Color zlta = Color.fromRGBO(237, 187, 0, 1);
   final Color bledsiamodra = Color.fromRGBO(151, 222, 223, 1);
   final Color mainColor = Color.fromRGBO(150, 0, 0, 1); // tmavočervená
   final Color secondColor = Color.fromRGBO(192, 46, 46, 1);
@@ -19,13 +20,13 @@ class MainAppStyle {
     scaffoldBackgroundColor: Color.fromRGBO(230, 237, 253, 1),
     primarySwatch: createMaterialColor(Color.fromRGBO(150, 0, 0, 1)),
     colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(Color.fromRGBO(150, 0, 0, 1))).copyWith(
-      secondary: Color.fromRGBO(192, 46, 46, 1), // pre Switch a ďalšie accent widgety
+      secondary: Color.fromRGBO(150, 0, 0, 1), // pre Switch a ďalšie accent widgety
     ),
     appBarTheme: AppBarTheme(backgroundColor: Color.fromRGBO(150, 0, 0, 1), foregroundColor: Colors.white),
     progressIndicatorTheme: ProgressIndicatorThemeData(color: Color.fromRGBO(150, 0, 0, 1)),
-    splashColor: Color.fromRGBO(254, 102, 0, 1),
-    hoverColor: Color.fromRGBO(254, 102, 0, 1),
-    highlightColor: Color.fromRGBO(254, 102, 0, 1),
+    splashColor: Color.fromRGBO(150, 0, 0, 1),
+    hoverColor: Color.fromRGBO(150, 0, 0, 1),
+    highlightColor: Color.fromRGBO(150, 0, 0, 1),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(backgroundColor: Color.fromRGBO(192, 46, 46, 1), foregroundColor: Colors.white),
     ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rychtech/include/appbar.dart';
+import 'package:rychtech/include/style.dart' as style;
 import 'package:rychtech/models/user_data.dart';
 import '../include/drupal_api.dart';
 
@@ -105,6 +105,23 @@ class _PageSettingState extends State<PageSetting> {
 
   @override
   Widget build(BuildContext context) {
+    final yellowSwitchTheme = Theme.of(context).copyWith(
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return style.MainAppStyle().zlta;
+          }
+          return const Color.fromARGB(255, 104, 104, 104);
+        }),
+        trackColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return style.MainAppStyle().zlta.withOpacity(0.5);
+          }
+          return const Color.fromARGB(255, 123, 123, 123).withOpacity(0.3);
+        }),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(title: const Text("Nastavenia"), backgroundColor: const Color.fromRGBO(220, 118, 0, 1)),
 
@@ -125,8 +142,8 @@ class _PageSettingState extends State<PageSetting> {
                       onPressed: () {
                         updateMask(leto: true);
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: isLeto ? Colors.blue : Colors.grey.shade300),
-                      child: Text("Leto", style: TextStyle(color: isLeto ? Colors.white : Colors.black)),
+                      style: ElevatedButton.styleFrom(backgroundColor: isLeto ? style.MainAppStyle().zlta : const Color.fromRGBO(110, 110, 110, 1)),
+                      child: Text("Leto", style: TextStyle(color: isLeto ? Colors.black : Colors.white)),
                     ),
                   ),
 
@@ -137,8 +154,8 @@ class _PageSettingState extends State<PageSetting> {
                       onPressed: () {
                         updateMask(leto: false);
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: !isLeto ? Colors.blue : Colors.grey.shade300),
-                      child: Text("Zima", style: TextStyle(color: !isLeto ? Colors.white : Colors.black)),
+                      style: ElevatedButton.styleFrom(backgroundColor: !isLeto ? style.MainAppStyle().zlta : const Color.fromRGBO(110, 110, 110, 1)),
+                      child: Text("Zima", style: TextStyle(color: !isLeto ? Colors.black : Colors.white)),
                     ),
                   ),
                 ],
@@ -150,12 +167,15 @@ class _PageSettingState extends State<PageSetting> {
             /// AUTO
             _buildSectionCard(
               title: "Automatické zvonenia",
-              child: SwitchListTile(
-                value: automatickeZvonenia,
-                onChanged: (val) {
-                  updateMask(autoZvonenie: val);
-                },
-                title: Text(automatickeZvonenia ? "Zapnuté" : "Vypnuté"),
+              child: Theme(
+                data: yellowSwitchTheme,
+                child: SwitchListTile(
+                  value: automatickeZvonenia,
+                  onChanged: (val) {
+                    updateMask(autoZvonenie: val);
+                  },
+                  title: Text(automatickeZvonenia ? "Zapnuté" : "Vypnuté"),
+                ),
               ),
             ),
 
@@ -164,12 +184,15 @@ class _PageSettingState extends State<PageSetting> {
             /// ODBIJANIE
             _buildSectionCard(
               title: "Odbíjanie času",
-              child: SwitchListTile(
-                value: odbijanieCasu,
-                onChanged: (val) {
-                  updateMask(odbijanie: val);
-                },
-                title: Text(odbijanieCasu ? "Zapnuté" : "Vypnuté"),
+              child: Theme(
+                data: yellowSwitchTheme,
+                child: SwitchListTile(
+                  value: odbijanieCasu,
+                  onChanged: (val) {
+                    updateMask(odbijanie: val);
+                  },
+                  title: Text(odbijanieCasu ? "Zapnuté" : "Vypnuté"),
+                ),
               ),
             ),
 
@@ -185,8 +208,8 @@ class _PageSettingState extends State<PageSetting> {
                       onPressed: () {
                         updateMask(cyklus: true);
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: cyklusPol ? Colors.blue : Colors.grey.shade300),
-                      child: Text("1/2", style: TextStyle(color: cyklusPol ? Colors.white : Colors.black)),
+                      style: ElevatedButton.styleFrom(backgroundColor: cyklusPol ? style.MainAppStyle().zlta : const Color.fromARGB(255, 104, 104, 104)),
+                      child: Text("1/2", style: TextStyle(color: cyklusPol ? Colors.black : Colors.white)),
                     ),
                   ),
 
@@ -197,8 +220,8 @@ class _PageSettingState extends State<PageSetting> {
                       onPressed: () {
                         updateMask(cyklus: false);
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: !cyklusPol ? Colors.blue : Colors.grey.shade300),
-                      child: Text("1/4", style: TextStyle(color: !cyklusPol ? Colors.white : Colors.black)),
+                      style: ElevatedButton.styleFrom(backgroundColor: !cyklusPol ? style.MainAppStyle().zlta : const Color.fromARGB(255, 104, 104, 104)),
+                      child: Text("1/4", style: TextStyle(color: !cyklusPol ? Colors.black : Colors.white)),
                     ),
                   ),
                 ],

@@ -1,4 +1,4 @@
-package com.example.rychtech
+package com.progresivneaplikacie.rychtech
 
 import io.flutter.embedding.android.FlutterActivity
 

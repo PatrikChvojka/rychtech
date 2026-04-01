@@ -35,7 +35,6 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
   void initState() {
     super.initState();
     dlzkaController = TextEditingController(text: "30");
-    loadData();
     initData();
   }
 
@@ -44,6 +43,8 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
   Future<void> initData() async {
     String uidStr = await UserData.getCurrentUser('uid');
     uid = int.tryParse(uidStr) ?? 0;
+
+    await loadData();
 
     // aktivita
     await api.setZvonyString(uid, 32, "31");
@@ -75,7 +76,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
   // LOAD
   // ======================
   Future<void> loadData() async {
-    String result = await api.getZvonyString(0, 77); // použijeme kód 77
+    String result = await api.getZvonyString(uid, 77); // použijeme kód 77 pre aktuálneho používateľa
 
     if (result.isEmpty) {
       result = "0,07:00,18:00,30,0,1,1"; // default: deaktivované, dva časy, dĺžka, zvony=0, den=1, mesiac=1
@@ -193,10 +194,27 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
   Widget build(BuildContext context) {
     if (isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
+    final yellowSwitchTheme = Theme.of(context).copyWith(
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return style.MainAppStyle().zlta;
+          }
+          return const Color.fromARGB(255, 104, 104, 104);
+        }),
+        trackColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return style.MainAppStyle().zlta.withOpacity(0.5);
+          }
+          return const Color.fromARGB(255, 123, 123, 123).withOpacity(0.3);
+        }),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Zvonenie zosnulému"),
-        backgroundColor: const Color.fromRGBO(110, 0, 110, 1),
+        backgroundColor: const Color.fromRGBO(100, 0, 100, 1),
         actions: [IconButton(icon: const Icon(Icons.save), tooltip: "Uložiť nastavenia", onPressed: () => saveData(null, showSnack: true, showSavedMessage: true))],
       ),
       body: ListView(
@@ -227,7 +245,12 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
 
           const Text("Výber zvonov", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
 
-          for (int i = 0; i < 5; i++) SwitchListTile(title: Text("Zvon ${i + 1}"), value: zvony[i], onChanged: (v) => setState(() => zvony[i] = v)),
+          Theme(
+            data: yellowSwitchTheme,
+            child: Column(
+              children: [for (int i = 0; i < 5; i++) SwitchListTile(title: Text("Zvon ${i + 1}"), value: zvony[i], onChanged: (v) => setState(() => zvony[i] = v))],
+            ),
+          ),
 
           const SizedBox(height: 10),
 

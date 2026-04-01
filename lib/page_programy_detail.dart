@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rychtech/models/user_data.dart';
+import 'package:rychtech/include/style.dart' as style;
 import '../include/drupal_api.dart';
 
 class PageProgramDetail extends StatefulWidget {
@@ -229,20 +230,60 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
 
           const SizedBox(height: 10),
 
-          for (int i = 0; i < 5; i++) SwitchListTile(title: Text("Zvon ${i + 1}"), value: zvony[i], onChanged: (v) => setState(() => zvony[i] = v)),
+          Theme(
+            data: Theme.of(context).copyWith(
+              switchTheme: SwitchThemeData(
+                thumbColor: MaterialStateProperty.resolveWith((states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return style.MainAppStyle().zlta;
+                  }
+                  return const Color.fromARGB(255, 104, 104, 104);
+                }),
+                trackColor: MaterialStateProperty.resolveWith((states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return style.MainAppStyle().zlta.withOpacity(0.5);
+                  }
+                  return const Color.fromARGB(255, 123, 123, 123).withOpacity(0.3);
+                }),
+              ),
+            ),
+            child: Column(
+              children: [for (int i = 0; i < 5; i++) SwitchListTile(title: Text("Zvon ${i + 1}"), value: zvony[i], onChanged: (v) => setState(() => zvony[i] = v))],
+            ),
+          ),
 
           const Divider(),
 
           const Text("Perióda", style: TextStyle(fontSize: 18)),
           Row(
             children: [
-              ChoiceChip(label: const Text("Týždeň"), selected: perioda == 0, onSelected: (_) => setState(() => perioda = 0)),
-              const SizedBox(width: 10),
-              ChoiceChip(label: const Text("Rok"), selected: perioda == 1, onSelected: (_) => setState(() => perioda = 1)),
+              Expanded(
+                child: ChoiceChip(
+                  label: const Center(child: Text("Týždeň")),
+                  selected: perioda == 0,
+                  selectedColor: style.MainAppStyle().mainColor,
+                  backgroundColor: const Color.fromARGB(255, 104, 104, 104),
+                  labelStyle: const TextStyle(color: Colors.white),
+                  showCheckmark: false,
+                  onSelected: (_) => setState(() => perioda = 0),
+                ),
+              ),
+              const VerticalDivider(width: 10, thickness: 1, color: Color.fromARGB(255, 85, 85, 85)),
+              Expanded(
+                child: ChoiceChip(
+                  label: const Center(child: Text("Rok")),
+                  selected: perioda == 1,
+                  selectedColor: style.MainAppStyle().mainColor,
+                  backgroundColor: const Color.fromRGBO(110, 110, 110, 1),
+                  labelStyle: const TextStyle(color: Colors.white),
+                  showCheckmark: false,
+                  onSelected: (_) => setState(() => perioda = 1),
+                ),
+              ),
             ],
           ),
 
-          const SizedBox(height: 15),
+          const Divider(),
 
           if (perioda == 0) buildDni(),
           if (perioda == 1) buildDatum(),
@@ -264,7 +305,15 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
     return Wrap(
       spacing: 8,
       children: List.generate(7, (i) {
-        return FilterChip(label: Text(nazvy[i]), selected: dni[i], onSelected: (v) => setState(() => dni[i] = v));
+        return FilterChip(
+          label: Text(nazvy[i]),
+          selected: dni[i],
+          backgroundColor: const Color.fromRGBO(110, 110, 110, 1),
+          selectedColor: style.MainAppStyle().zlta,
+          checkmarkColor: Colors.black,
+          labelStyle: TextStyle(color: dni[i] ? Colors.black : Colors.white),
+          onSelected: (v) => setState(() => dni[i] = v),
+        );
       }),
     );
   }

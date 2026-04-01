@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rychtech/include/appbar.dart';
 import 'package:rychtech/models/user_data.dart';
 import 'package:rychtech/page_programy_detail.dart';
 import '../include/drupal_api.dart';
@@ -87,7 +86,7 @@ class _PageProgramyState extends State<PageProgramy> {
       int mesiac = int.tryParse(parts[7].toString()) ?? 0;
 
       if (den > 0 && mesiac > 0) {
-        return "${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}";
+        return "${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}.";
       }
     }
 
@@ -185,9 +184,9 @@ class _PageProgramyState extends State<PageProgramy> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 15),
                 decoration: BoxDecoration(
-                  color: enabled ? const Color.fromRGBO(0, 0, 150, 1) : const Color.fromRGBO(96, 96, 96, 1),
+                  color: enabled ? const Color.fromRGBO(0, 0, 150, 1) : const Color.fromRGBO(110, 110, 110, 1),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: enabled ? const Color.fromRGBO(0, 0, 150, 1) : Color.fromRGBO(96, 96, 96, 1)),
+                  border: Border.all(color: enabled ? const Color.fromRGBO(0, 0, 150, 1) : Color.fromRGBO(110, 110, 110, 1)),
                 ),
                 child: Text(
                   getProgramTitle(index),

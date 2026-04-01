@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rychtech/include/appbar.dart';
 import 'package:rychtech/models/user_data.dart';
 import '../include/drupal_api.dart';
 
@@ -10,7 +9,7 @@ class PageZvony extends StatefulWidget {
   State<PageZvony> createState() => _PageZvonyState();
 }
 
-class _PageZvonyState extends State<PageZvony> with WidgetsBindingObserver {
+class _PageZvonyState extends State<PageZvony> {
   int mask = 0;
   List<bool> zvony = List.filled(5, false);
 
@@ -22,7 +21,6 @@ class _PageZvonyState extends State<PageZvony> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     initData();
   }
 
@@ -97,17 +95,7 @@ class _PageZvonyState extends State<PageZvony> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    // Do not call async API updates from dispose, we handle disable on pop in WillPopScope.
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
-      _disableAllZvony();
-    }
   }
 
   @override
@@ -139,7 +127,7 @@ class _PageZvonyState extends State<PageZvony> with WidgetsBindingObserver {
         },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 18),
-          backgroundColor: isActive ? const Color.fromRGBO(237, 187, 0, 1) : const Color.fromRGBO(96, 96, 96, 1),
+          backgroundColor: isActive ? const Color.fromRGBO(237, 187, 0, 1) : const Color.fromRGBO(110, 110, 110, 1),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         child: Text(
