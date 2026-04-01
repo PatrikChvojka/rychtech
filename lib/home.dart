@@ -43,26 +43,27 @@ class _HomePageState extends State<HomePage> {
     uid = int.tryParse(uidStr) ?? 0;
 
     // aktivita
+    print("uid");
+    print(uid);
+
+    // aktivita
     await api.setZvonyString(uid, 32, "1");
   }
 
   @override
   Widget build(BuildContext context) {
-    // aktivita
-    api.setZvonyString(uid, 32, "1");
-
     return Scaffold(
       appBar: MainAppBar(pageTitle: 'Home'),
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromRGBO(230, 237, 253, 1),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ListView(
           children: [
-            _buildBox("Zvony", Color.fromRGBO(136, 33, 29, 1), context, "PageZvony"),
-            _buildBox("Programy", Color.fromRGBO(11, 67, 216, 1), context, "PageProgramy"),
-            _buildBox("Hodiny", Color.fromRGBO(48, 152, 55, 1), context, "PageHodiny"),
-            _buildBox("Zvonenie zosnulému", Color.fromRGBO(156, 39, 176, 1), context, "ZvonenieZosnulemu"),
-            _buildBox("Nastavania", Color.fromRGBO(237, 173, 42, 1), context, "PageSetting"),
+            _buildBox("Zvony", Color.fromRGBO(150, 0, 0, 1), context, "PageZvony"),
+            _buildBox("Programy", Color.fromRGBO(0, 0, 150, 1), context, "PageProgramy"),
+            _buildBox("Hodiny", Color.fromRGBO(0, 89, 0, 1), context, "PageHodiny"),
+            _buildBox("Zvonenie zosnulému", Color.fromRGBO(110, 0, 110, 1), context, "ZvonenieZosnulemu"),
+            _buildBox("Nastavania", Color.fromRGBO(220, 118, 0, 1), context, "PageSetting"),
           ],
         ),
       ),
@@ -75,7 +76,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildBox(String title, Color color, BuildContext context, String route) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/$route');
+        Navigator.pushNamed(context, '/$route').then((_) => initData());
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),

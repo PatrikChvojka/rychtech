@@ -95,16 +95,16 @@ class _PageHodinyState extends State<PageHodiny> {
       String newState = "OK";
 
       if (stateStr == "2") {
-        newState = "STOJ";
+        newState = "stoja";
       }
       if (stateStr == "1") {
-        newState = "OK";
+        newState = "idú";
       }
       if (stateStr == "5") {
-        newState = "DOBIEHAJÚ";
+        newState = "dobiehajú";
       }
       if (stateStr == "7") {
-        newState = "ČAKAJÚ";
+        newState = "čakajú";
       }
 
       // parsovanie času
@@ -122,7 +122,7 @@ class _PageHodinyState extends State<PageHodiny> {
         clockTime = TimeOfDay(hour: h, minute: m);
 
         // keď ide CHOD → zruš edit
-        if (systemState != "STOJ") {
+        if (systemState != "stoja") {
           editedTime = null;
         }
 
@@ -131,7 +131,7 @@ class _PageHodinyState extends State<PageHodiny> {
         if (waitingForState) {
           // čakali sme STOJ
 
-          if (expectedState == "2" && systemState == "STOJ") {
+          if (expectedState == "2" && systemState == "stoja") {
             loading = false;
             waitingForState = false;
             expectedState = null;
@@ -139,7 +139,7 @@ class _PageHodinyState extends State<PageHodiny> {
 
           // čakali sme CHOD
 
-          if (expectedState == "1" && systemState != "STOJ") {
+          if (expectedState == "1" && systemState != "stoja") {
             loading = false;
             waitingForState = false;
             expectedState = null;
@@ -184,6 +184,7 @@ class _PageHodinyState extends State<PageHodiny> {
     final time = "$h:$m";
 
     try {
+      print(time);
       await api.setZvonyString(uid, 81, time);
 
       editedTime = null;
@@ -239,7 +240,7 @@ class _PageHodinyState extends State<PageHodiny> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  editedTime = TimeOfDay(hour: pickerHour % 12, minute: pickerMinute);
+                  editedTime = TimeOfDay(hour: pickerHour, minute: pickerMinute);
                 });
 
                 Navigator.pop(context);
@@ -282,10 +283,10 @@ class _PageHodinyState extends State<PageHodiny> {
 
   @override
   Widget build(BuildContext context) {
-    final isStop = systemState == "STOJ";
+    final isStop = systemState == "stoja";
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Hodiny")),
+      appBar: AppBar(title: const Text("Hodiny"), backgroundColor: const Color.fromRGBO(0, 89, 0, 1)),
       body: Stack(
         children: [
           Padding(
@@ -295,8 +296,8 @@ class _PageHodinyState extends State<PageHodiny> {
               children: [
                 Card(
                   child: ListTile(
-                    title: const Text("Stav systému"),
-                    subtitle: Text(systemState, style: const TextStyle(fontSize: 18)),
+                    title: const Text("STAV SYSTÉMU"),
+                    subtitle: Text("--" + systemState + "--", style: const TextStyle(fontSize: 18)),
                   ),
                 ),
 
@@ -304,7 +305,7 @@ class _PageHodinyState extends State<PageHodiny> {
 
                 Card(
                   child: ListTile(
-                    title: const Text("Čas na hodinách"),
+                    title: const Text("ČAS NA HODINÁCH"),
                     subtitle: Text(isStop ? _formatTime(editedTime ?? clockTime) : _formatTime(clockTime), style: const TextStyle(fontSize: 28)),
                     trailing: isStop ? IconButton(icon: const Icon(Icons.edit), onPressed: _pickTime) : null,
                   ),
@@ -318,9 +319,9 @@ class _PageHodinyState extends State<PageHodiny> {
                       child: _controlButton(
                         text: "CHOD",
                         color: Colors.green,
-                        isActive: systemState != "STOJ",
+                        isActive: systemState != "stoja",
                         onTap: () async {
-                          if (systemState == "STOJ") {
+                          if (systemState == "stoja") {
                             if (editedTime != null && !_isSameTime(editedTime!, clockTime)) {
                               await _sendTimeAndStart();
                             } else {
@@ -339,7 +340,7 @@ class _PageHodinyState extends State<PageHodiny> {
                       child: _controlButton(
                         text: "STOP",
                         color: style.MainAppStyle().mainColor,
-                        isActive: systemState == "STOJ",
+                        isActive: systemState == "stoja",
                         onTap: () async {
                           await _sendState("2");
                         },

@@ -46,7 +46,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
     uid = int.tryParse(uidStr) ?? 0;
 
     // aktivita
-    await api.setZvonyString(uid, 32, "4");
+    await api.setZvonyString(uid, 32, "31");
   }
 
   Widget _controlButton({required String text, required Color color, required bool isActive, required VoidCallback onTap}) {
@@ -142,7 +142,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
 
     String data = "${aktivne ? 1 : 0},$t1,$t2,$dlzka,$zvMask,$den,$mesiac";
 
-    bool success = await api.setZvonyString(0, 77, data);
+    bool success = await api.setZvonyString(uid, 77, data);
 
     if (mounted && success) {
       if (showSnack) {
@@ -196,6 +196,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Zvonenie zosnulému"),
+        backgroundColor: const Color.fromRGBO(110, 0, 110, 1),
         actions: [IconButton(icon: const Icon(Icons.save), tooltip: "Uložiť nastavenia", onPressed: () => saveData(null, showSnack: true, showSavedMessage: true))],
       ),
       body: ListView(
@@ -234,7 +235,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
             onTap: pickDate,
             child: Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
               child: Text("Dátum pohrebu: ${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 16)),
             ),
           ),
@@ -269,7 +270,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
 
   Widget buildTimeTile(String title, TimeOfDay time, VoidCallback onTap) {
     return Container(
-      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
       child: ListTile(title: Text(title), subtitle: Text(time.format(context)), trailing: const Icon(Icons.access_time), onTap: onTap),
     );
   }

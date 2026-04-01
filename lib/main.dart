@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:onepref/onepref.dart';
 import 'package:rychtech/home.dart';
 import 'package:rychtech/login.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'OnlineBell',
       theme: style.MainAppStyle().themeData, // tu sa načíta červená téma
+      locale: const Locale('sk', 'SK'),
+      supportedLocales: const [Locale('sk', 'SK'), Locale('en', 'US')],
+      localizationsDelegates: const [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
       home: loggedIn ? HomePage() : login(),
       routes: {
         '/home': (context) => HomePage(),

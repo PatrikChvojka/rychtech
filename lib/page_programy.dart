@@ -36,7 +36,7 @@ class _PageProgramyState extends State<PageProgramy> {
     await loadPrograms();
 
     // aktivita
-    await api.setZvonyString(uid, 32, "6");
+    await api.setZvonyString(uid, 32, "1");
   }
 
   // =========================
@@ -75,7 +75,23 @@ class _PageProgramyState extends State<PageProgramy> {
     String data = programStrings[index];
     List parts = data.split(',');
 
-    if (parts.length < 2 || parts[1].isEmpty || parts[0] != "1") {
+    if (parts.length < 2) {
+      return "PROGRAM ${index + 1}";
+    }
+
+    // perioda: 0 = týždeň (zobraziť čas), 1 = rok (zobraziť dátum)
+    int perioda = parts.length > 5 ? int.tryParse(parts[5].toString()) ?? 0 : 0;
+
+    if (perioda == 1 && parts.length > 7) {
+      int den = int.tryParse(parts[6].toString()) ?? 0;
+      int mesiac = int.tryParse(parts[7].toString()) ?? 0;
+
+      if (den > 0 && mesiac > 0) {
+        return "${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}";
+      }
+    }
+
+    if (parts[1].toString().trim().isEmpty) {
       return "PROGRAM ${index + 1}";
     }
 
@@ -132,7 +148,7 @@ class _PageProgramyState extends State<PageProgramy> {
           },
         ),
       ),
-    );
+    ).then((_) => initData());
   }
 
   // =========================
@@ -141,8 +157,8 @@ class _PageProgramyState extends State<PageProgramy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Programy")),
-      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text("Programy"), backgroundColor: const Color.fromRGBO(0, 0, 150, 1)),
+      backgroundColor: const Color.fromRGBO(230, 237, 253, 1),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: ListView.builder(
@@ -169,11 +185,14 @@ class _PageProgramyState extends State<PageProgramy> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 15),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: enabled ? const Color.fromRGBO(0, 0, 150, 1) : const Color.fromRGBO(96, 96, 96, 1),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: enabled ? const Color.fromRGBO(0, 0, 150, 1) : Color.fromRGBO(96, 96, 96, 1)),
                 ),
-                child: Text(getProgramTitle(index), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(
+                  getProgramTitle(index),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: enabled ? Colors.white : Colors.white),
+                ),
               ),
             ),
           ),
@@ -186,7 +205,7 @@ class _PageProgramyState extends State<PageProgramy> {
             child: Container(
               width: 42,
               height: 42,
-              decoration: BoxDecoration(color: enabled ? Colors.green : Colors.red, borderRadius: BorderRadius.circular(6)),
+              decoration: BoxDecoration(color: enabled ? const Color.fromRGBO(0, 89, 0, 1) : const Color.fromRGBO(150, 0, 0, 1), borderRadius: BorderRadius.circular(6)),
             ),
           ),
         ],

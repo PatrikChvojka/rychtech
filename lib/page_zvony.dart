@@ -118,8 +118,8 @@ class _PageZvonyState extends State<PageZvony> with WidgetsBindingObserver {
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text("Zvony")),
-        backgroundColor: Colors.white,
+        appBar: AppBar(title: const Text("Zvony"), backgroundColor: const Color.fromRGBO(150, 0, 0, 1)),
+        backgroundColor: const Color.fromRGBO(230, 237, 253, 1),
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: ListView(children: [_buildZvonButton("Zvon 1", 0), _buildZvonButton("Zvon 2", 1), _buildZvonButton("Zvon 3", 2), _buildZvonButton("Zvon 4", 3), _buildZvonButton("Zvon 5", 4)]),
@@ -139,12 +139,12 @@ class _PageZvonyState extends State<PageZvony> with WidgetsBindingObserver {
         },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 18),
-          backgroundColor: isActive ? Colors.green : Colors.grey.shade300,
+          backgroundColor: isActive ? const Color.fromRGBO(237, 187, 0, 1) : const Color.fromRGBO(96, 96, 96, 1),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         child: Text(
           title,
-          style: TextStyle(fontSize: 18, color: isActive ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, color: isActive ? Colors.white : Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );

@@ -60,7 +60,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
     uid = int.tryParse(uidStr) ?? 0;
 
     // aktivita
-    await api.setZvonyString(uid, 32, "4");
+    await api.setZvonyString(uid, 32, widget.code.toString());
   }
 
   Future<void> loadDataFromServer() async {
@@ -186,6 +186,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Nastavenie programu"),
+        backgroundColor: const Color.fromRGBO(0, 0, 150, 1),
         actions: [IconButton(icon: const Icon(Icons.save), onPressed: saveData)],
       ),
       body: ListView(
@@ -195,7 +196,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200, // jemné šedé pozadie
+              color: Colors.white, // jemné šedé pozadie
               borderRadius: BorderRadius.circular(8),
             ),
             child: ListTile(title: const Text("Čas zvonenia"), subtitle: Text("${time.format(context)}"), trailing: const Icon(Icons.access_time), onTap: pickTime),
@@ -207,7 +208,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 246, 225, 225), // jemné šedé pozadie
+              color: Colors.white, // jemné šedé pozadie
               borderRadius: BorderRadius.circular(8),
             ),
             child: TextField(
@@ -273,7 +274,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
       onTap: pickDate,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
         child: Text("Dátum: ${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 16)),
       ),
     );

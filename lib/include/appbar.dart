@@ -38,7 +38,7 @@ class _MainAppBarState extends State<MainAppBar> {
         child: Container(
           height: 140,
           // color: style.MainAppStyle().mainColor,
-          color: Colors.white,
+          color: const Color.fromRGBO(230, 237, 253, 1),
           child: Padding(
             padding: const EdgeInsets.only(top: 75, left: 10, right: 10, bottom: 0),
             child: Padding(
