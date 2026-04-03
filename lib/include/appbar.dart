@@ -65,7 +65,7 @@ class _MainAppBarState extends State<MainAppBar> {
                                     return Row(
                                       children: [
                                         Text(
-                                          'Ahoj, ',
+                                          'Kostol: ',
                                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.black),
                                         ),
                                         Text(

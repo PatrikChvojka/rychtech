@@ -213,7 +213,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Zvonenie zosnulému"),
+        title: const Text("Zosnulému"),
         backgroundColor: const Color.fromRGBO(100, 0, 100, 1),
         actions: [IconButton(icon: const Icon(Icons.save), tooltip: "Uložiť nastavenia", onPressed: () => saveData(null, showSnack: true, showSavedMessage: true))],
       ),
@@ -259,7 +259,7 @@ class _ZvonenieZosnulemuState extends State<ZvonenieZosnulemu> {
             child: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-              child: Text("Dátum pohrebu: ${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 16)),
+              child: Text("Dátum pohrebu: ${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}.", style: const TextStyle(fontSize: 16)),
             ),
           ),
 

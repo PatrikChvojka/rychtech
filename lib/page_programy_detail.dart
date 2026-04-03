@@ -186,7 +186,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Nastavenie programu"),
+        title: Text("Program ${widget.code - 10}"),
         backgroundColor: const Color.fromRGBO(0, 0, 150, 1),
         actions: [IconButton(icon: const Icon(Icons.save), onPressed: saveData)],
       ),
@@ -254,7 +254,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
 
           const Divider(),
 
-          const Text("Perióda", style: TextStyle(fontSize: 18)),
+          const Text("Perióda opakovania", style: TextStyle(fontSize: 18)),
           Row(
             children: [
               Expanded(
@@ -302,19 +302,55 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
 
   Widget buildDni() {
     List<String> nazvy = ["Po", "Ut", "St", "Št", "Pi", "So", "Ne"];
-    return Wrap(
-      spacing: 8,
-      children: List.generate(7, (i) {
-        return FilterChip(
-          label: Text(nazvy[i]),
-          selected: dni[i],
-          backgroundColor: const Color.fromRGBO(110, 110, 110, 1),
-          selectedColor: style.MainAppStyle().zlta,
-          checkmarkColor: Colors.black,
-          labelStyle: TextStyle(color: dni[i] ? Colors.black : Colors.white),
-          onSelected: (v) => setState(() => dni[i] = v),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        Widget dayChip(int i) {
+          return SizedBox(
+            width: double.infinity,
+            child: FilterChip(
+              label: SizedBox(
+                width: double.infinity,
+                child: Center(child: Text(nazvy[i])),
+              ),
+              selected: dni[i],
+              backgroundColor: Color.fromARGB(255, 145, 145, 145),
+              selectedColor: style.MainAppStyle().zlta.withOpacity(0.8),
+              checkmarkColor: Colors.black,
+              labelStyle: TextStyle(color: dni[i] ? Colors.black : Colors.white),
+              onSelected: (v) => setState(() => dni[i] = v),
+            ),
+          );
+        }
+
+        const double gap = 8; // ~2 mm on most displays
+        final double rowWidth = constraints.maxWidth;
+        final double firstRowItemWidth = (rowWidth - (gap * 3)) / 4;
+        final double secondRowQuarterWidth = (rowWidth - (gap * 2)) * 0.25;
+        final double secondRowHalfWidth = (rowWidth - (gap * 2)) * 0.5;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: List.generate(4, (i) {
+                return Padding(
+                  padding: EdgeInsets.only(right: i < 3 ? gap : 0),
+                  child: SizedBox(width: firstRowItemWidth, child: dayChip(i)),
+                );
+              }),
+            ),
+            Row(
+              children: [
+                SizedBox(width: secondRowQuarterWidth, child: dayChip(4)),
+                const SizedBox(width: gap),
+                SizedBox(width: secondRowQuarterWidth, child: dayChip(5)),
+                const SizedBox(width: gap),
+                SizedBox(width: secondRowHalfWidth, child: dayChip(6)),
+              ],
+            ),
+          ],
         );
-      }),
+      },
     );
   }
 
@@ -324,7 +360,7 @@ class _PageProgramDetailState extends State<PageProgramDetail> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-        child: Text("Dátum: ${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}", style: const TextStyle(fontSize: 16)),
+        child: Text("Dátum: ${den.toString().padLeft(2, '0')}.${mesiac.toString().padLeft(2, '0')}.", style: const TextStyle(fontSize: 16)),
       ),
     );
   }

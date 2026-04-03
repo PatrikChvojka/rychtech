@@ -135,7 +135,7 @@ class _loginState extends State<login> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset('lib/assets/images/logo.png', height: 300),
+                              Image.asset('lib/assets/images/icon.png', height: 300),
                               const SizedBox(height: 40),
                               Text(
                                 "Prihlásenie",
