@@ -45,7 +45,7 @@ class DrupalAPI {
   /// Príklad funkcie na zápis stringu do DB
   Future<bool> setZvonyString(int uid, int code, String string) async {
     try {
-      final url = Uri.parse('http://api.rychtech.sk/$uid/$code/${Uri.encodeComponent(string)}');
+      final url = Uri.parse('https://api.rychtech.sk/$uid/$code/${Uri.encodeComponent(string)}');
 
       final response = await http.get(url);
 
