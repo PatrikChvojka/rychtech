@@ -7,8 +7,6 @@ import '../include/style.dart' as style;
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
-import '../models/user_data.dart';
-
 void main() {
   runApp(MyApp());
 }
@@ -25,26 +23,71 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeMenuItem {
+  final String title;
+  final Color color;
+  final String route;
+
+  const _HomeMenuItem({required this.title, required this.color, required this.route});
+}
+
+const Map<int, _HomeMenuItem> _menuByTid = {
+  692: _HomeMenuItem(title: 'Zvony', color: Color.fromRGBO(150, 0, 0, 1), route: 'PageZvony'),
+  693: _HomeMenuItem(title: 'Programy', color: Color.fromRGBO(0, 0, 150, 1), route: 'PageProgramy'),
+  694: _HomeMenuItem(title: 'Hodiny', color: Color.fromRGBO(0, 89, 0, 1), route: 'PageHodiny'),
+  695: _HomeMenuItem(title: 'Zvonenie zosnulému', color: Color.fromRGBO(100, 0, 100, 1), route: 'ZvonenieZosnulemu'),
+  696: _HomeMenuItem(title: 'Nastavenia', color: Color.fromRGBO(220, 118, 0, 1), route: 'PageSetting'),
+};
+
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final DrupalAPI api = DrupalAPI();
 
   int uid = 0;
+  bool isLoading = true;
+  List<_HomeMenuItem> menuItems = [];
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     initData();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      initData();
+    }
   }
 
   // ================= INIT =================
 
   Future<void> initData() async {
-    String uidStr = await UserData.getCurrentUser('uid');
-    uid = int.tryParse(uidStr) ?? 0;
+    final prefs = await SharedPreferences.getInstance();
+    uid = int.tryParse(prefs.getString('uid')?.trim() ?? '') ?? 0;
 
-    // aktivita
-    print("uid");
-    print(uid);
+    final tids = await api.getMenuTids(uid);
+    final items = <_HomeMenuItem>[];
+
+    for (final tid in tids) {
+      final item = _menuByTid[tid];
+      if (item != null) items.add(item);
+    }
+
+    debugPrint('Home menu uid=$uid tids=$tids items=${items.map((e) => e.title).toList()}');
+
+    if (mounted) {
+      setState(() {
+        menuItems = items;
+        isLoading = false;
+      });
+    }
 
     // aktivita
     await api.setZvonyString(uid, 32, "1");
@@ -57,15 +100,11 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: const Color.fromRGBO(230, 237, 253, 1),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: ListView(
-          children: [
-            _buildBox("Zvony", Color.fromRGBO(150, 0, 0, 1), context, "PageZvony"),
-            _buildBox("Programy", Color.fromRGBO(0, 0, 150, 1), context, "PageProgramy"),
-            _buildBox("Hodiny", Color.fromRGBO(0, 89, 0, 1), context, "PageHodiny"),
-            _buildBox("Zvonenie zosnulému", Color.fromRGBO(100, 0, 100, 1), context, "ZvonenieZosnulemu"),
-            _buildBox("Nastavania", Color.fromRGBO(220, 118, 0, 1), context, "PageSetting"),
-          ],
-        ),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : menuItems.isEmpty
+            ? const Center(child: Text('Žiadne položky menu'))
+            : ListView(children: [for (final item in menuItems) _buildBox(item.title, item.color, context, item.route)]),
       ),
 
       /* BOTTOM MENU */

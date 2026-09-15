@@ -12,6 +12,28 @@ class DrupalAPI {
   final username = 'api_424';
   final password = 'apiHb@Clean24';
 
+  /// Aktívne položky menu (TID taxonomií) pre používateľa, kód 92.
+  Future<List<int>> getMenuTids(int uid) async {
+    try {
+      final url = Uri.parse('https://api.rychtech.sk/$uid/92');
+      final response = await http.get(url, headers: {'Cache-Control': 'no-cache', 'Pragma': 'no-cache'});
+
+      if (response.statusCode != 200) {
+        return [];
+      }
+
+      return response.body
+          .trim()
+          .split(',')
+          .map((e) => int.tryParse(e.trim()))
+          .whereType<int>()
+          .where((tid) => tid > 0)
+          .toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
   /// Funkcia, ktorá z PHP skriptu načíta string podľa UID a CODE
   Future<String> getZvonyString(int uid, int code) async {
     try {
